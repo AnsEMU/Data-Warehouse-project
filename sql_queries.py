@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS staging_events(
 
 staging_songs_table_create= (""" 
 CREATE TABLE IF NOT EXISTS staging_songs(
-     num_songs int,
+     num_songs int not null,
      artist_id varchar,
      artist_latitude numeric,
      artist_longitude numeric,
@@ -88,7 +88,7 @@ song_id varchar PRIMARY KEY NOT NULL,
 title varchar NOT NULL,
 artist_id varchar NOT NULL,
 year int NOT NULL,
-uration float NOT NULL)
+duration float NOT NULL)
 """)
 
 artist_table_create = ("""
@@ -133,14 +133,14 @@ BLANKSASNULL;
 
 songplay_table_insert = ("""
 INSERT INTO factsongplays (start_time, userId, level, song_id, artist_id, sessionId, location, userAgent)
-SELECT SELECT DISTINCT timestamp 'epoch' + e.ts * interval '0.001 seconds' as start_time,
+SELECT DISTINCT timestamp 'epoch' + e.ts * interval '0.001 seconds' as start_time,
        e.userId,
        e.level,
        s.song_id,
        s.artist_id,
        e.sessionId,
        e.location,
-       e.userAgent,
+       e.userAgent
 FROM staging_events AS e
 join staging_songs AS s
 ON (e.artist = s.artist_name)
@@ -156,20 +156,17 @@ select distinct userId,
        lastName,
        gender,
        level
-        from  staging_events
-        WHERE page='NextSong'
+       from  staging_events
+       WHERE page='NextSong'
 """)
 
 song_table_insert = ("""
 INSERT INTO dimsongs (song_id, title, artist_id, year, duration)
-SELECT ts                   AS start_time,
-       e.userId,
-       e.level,
-       s.song_id,
+SELECT s.song_id,
+       s.title,
        s.artist_id,
-       e.sessionId,
-       e.location,
-       e.userAgent,
+       s.year,
+       s.duration
 FROM staging_songs AS s
 join staging_events AS e
 ON (e.artist = s.artist_name)
@@ -184,14 +181,15 @@ select artist_id,
        artist_name,
        artist_location,
        artist_latitude,
-       artist_longitude,       
+       artist_longitude      
      from staging_songs
+     WHERE artist_location IS NOT NULL and artist_latitude IS NOT NULL
 """)
 
 time_table_insert = ("""
 INSERT INTO dimtime (start_time, hour, day, week, month, year, weekday)
 SELECT DISTINCT TIMESTAMP 'epoch' + (ts/1000) * INTERVAL '1 second' as start_time,
-EXTRACT (HOUR FROM a.start_time) AS hour,
+EXTRACT (HOUR FROM start_time) AS hour,
 EXTRACT (DAY FROM start_time) AS day,
 EXTRACT (WEEKS FROM start_time) AS week,
 EXTRACT (MONTH FROM start_time) AS month,
