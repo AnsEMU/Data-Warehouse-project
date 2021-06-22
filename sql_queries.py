@@ -23,40 +23,41 @@ time_table_drop = "DROP TABLE IF EXISTS dimtime;"
 
 # CREATE TABLES
 
-staging_events_table_create= (""" 
+staging_events_table_create= """ 
 CREATE TABLE IF NOT EXISTS staging_events(
-artist varchar,
-auth varchar,
-firstName varchar,
-gender varchar,
+event_id int identity(0,1),
+artist text,
+auth text,
+firstName text,
+gender text,
 itemInSession int,
-lastName varchar,
-length float,
-level varchar,
-location varchar,
-method varchar,
-page varchar,
+lastName text,
+length numeric,
+level text,
+location text,
+method text,
+page text,
 registration numeric,
 sessionId int,
-song varchar,
+song text,
 status int,
 ts bigint,
-userAgent varchar,
+userAgent text,
 userId int);
-""")
+"""
 
 staging_songs_table_create= (""" 
 CREATE TABLE IF NOT EXISTS staging_songs(
 num_songs int,
-artist_id varchar(25),
+artist_id text,
 artist_latitude numeric,
 artist_longitude numeric,
-artist_location varchar(25),
-artist_name varchar(25),
-song_id varchar(25),
-title varchar(25),
+artist_location text,
+artist_name text,
+song_id text,
+title text,
 duration float,
-year int);
+year int)
 """)
 # start_time timestamp not null,
 songplay_table_create = ("""
@@ -69,7 +70,7 @@ song_id varchar NOT NULL,
 artist_id varchar NOT NULL,
 sessionId int NOT NULL,
 location varchar NOT NULL,
-userAgent varchar NOT NULL);
+userAgent varchar NOT NULL)
 """)
 
 user_table_create = ("""
@@ -78,7 +79,7 @@ userId int PRIMARY KEY NOT NULL,
 firstName varchar NOT NULL,
 lastName varchar NOT NULL,
 gender varchar NOT NULL,
-level varchar NOT NULL);
+level varchar NOT NULL)
 """)
 
 song_table_create = ("""
@@ -87,7 +88,7 @@ song_id varchar PRIMARY KEY NOT NULL,
 title varchar NOT NULL,
 artist_id varchar NOT NULL,
 year int NOT NULL,
-uration float NOT NULL);
+uration float NOT NULL)
 """)
 
 artist_table_create = ("""
@@ -96,7 +97,7 @@ artist_id varchar PRIMARY KEY NOT NULL,
 artist_name varchar NOT NULL,
 artist_location varchar NOT NULL,
 artist_latitude numeric NOT NULL,
-artist_longitude numeric NOT NULL)diststyle all;
+artist_longitude numeric NOT NULL)diststyle all
 """)
 
 time_table_create = ("""
@@ -107,7 +108,7 @@ day int NOT NULL,
 week int NOT NULL,
 month int NOT NULL,
 year int NOT NULL,
-weekday int NOT NULL)diststyle all;
+weekday int NOT NULL)diststyle all
 """)
 
 # STAGING TABLES
@@ -117,7 +118,7 @@ copy staging_events from '{}'
 credentials 'aws_iam_role={}'
 json '{}' compupdate on region 'us-west-2'
 EMPTYASNULL
-BLANKSASNULL;
+BLANKSASNULL
 """).format(LOG_DATA,IAM_ROLE,LOG_JSONPATH)
 
 staging_songs_copy = ("""
@@ -125,7 +126,7 @@ copy staging_songs from '{}'
 credentials 'aws_iam_role={}'
 json '{}' compupdate on region 'us-west-2'
 EMPTYASNULL
-BLANKSASNULL;
+BLANKSASNULL
 """).format(SONG_DATA,IAM_ROLE,LOG_JSONPATH)
 
 # FINAL TABLES
@@ -145,7 +146,7 @@ join staging_songs AS s
 ON (e.artist = s.artist_name)
      AND (e.song = s.title)
      AND (e.length = s.duration)
-     WHERE e.page = 'NextSong' AND e.userId IS NOT NULL;
+     WHERE e.page = 'NextSong' AND e.userId IS NOT NULL
 """)
 
 user_table_insert = ("""
@@ -156,7 +157,7 @@ select distinct userId,
        gender,
        level
         from  staging_events
-        WHERE page='NextSong';
+        WHERE page='NextSong'
 """)
 
 song_table_insert = ("""
@@ -174,7 +175,7 @@ join staging_events AS e
 ON (e.artist = s.artist_name)
      AND (e.song = s.title)
      AND (e.length = s.duration)
-     WHERE e.page = 'NextSong' AND e.userId IS NOT NULL;
+     WHERE e.page = 'NextSong' AND e.userId IS NOT NULL
 """)
 
 artist_table_insert = ("""
@@ -184,7 +185,7 @@ select artist_id,
        artist_location,
        artist_latitude,
        artist_longitude,       
-     from staging_songs;
+     from staging_songs
 """)
 
 time_table_insert = ("""
@@ -196,7 +197,7 @@ EXTRACT (WEEKS FROM start_time) AS week,
 EXTRACT (MONTH FROM start_time) AS month,
 EXTRACT (YEAR FROM start_time) AS year,
 EXTRACT (WEEKDAY FROM start_time) AS weekday
-FROM staging_events;
+FROM staging_events
 """)
 
 # QUERY LISTS
