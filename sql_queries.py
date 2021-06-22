@@ -25,39 +25,39 @@ time_table_drop = "DROP TABLE IF EXISTS dimtime;"
 
 staging_events_table_create= """ 
 CREATE TABLE IF NOT EXISTS staging_events(
-event_id int identity(0,1),
-artist text,
-auth text,
-firstName text,
-gender text,
-itemInSession int,
-lastName text,
-length numeric,
-level text,
-location text,
-method text,
-page text,
-registration numeric,
-sessionId int,
-song text,
-status int,
-ts bigint,
-userAgent text,
-userId int);
+     event_id int identity(0,1),
+     artist varchar,
+     auth varchar,
+     firstName varchar,
+     gender varchar,
+     itemInSession int,
+     lastName varchar,
+     length double precision,
+     level varchar,
+     location varchar,
+     method varchar,
+     page varchar,
+     registration double precision,
+     sessionId int,
+     song varchar,
+     status int,
+     ts bigint,
+     userAgent varchar,
+     userId int);
 """
 
 staging_songs_table_create= (""" 
 CREATE TABLE IF NOT EXISTS staging_songs(
-num_songs int,
-artist_id text,
-artist_latitude numeric,
-artist_longitude numeric,
-artist_location text,
-artist_name text,
-song_id text,
-title text,
-duration float,
-year int)
+     num_songs int,
+     artist_id varchar,
+     artist_latitude numeric,
+     artist_longitude numeric,
+     artist_location varchar,
+     artist_name varchar,
+     song_id varchar,
+     title varchar,
+     duration float,
+     year int)
 """)
 # start_time timestamp not null,
 songplay_table_create = ("""
@@ -116,17 +116,17 @@ weekday int NOT NULL)diststyle all
 staging_events_copy = ("""
 copy staging_events from '{}'
 credentials 'aws_iam_role={}'
-json '{}' compupdate on region 'us-west-2'
+json '{}' region 'us-west-2'
 EMPTYASNULL
-BLANKSASNULL
+BLANKSASNULL;
 """).format(LOG_DATA,IAM_ROLE,LOG_JSONPATH)
 
 staging_songs_copy = ("""
 copy staging_songs from '{}'
 credentials 'aws_iam_role={}'
-json '{}' compupdate on region 'us-west-2'
+json '{}' region 'us-west-2'
 EMPTYASNULL
-BLANKSASNULL
+BLANKSASNULL;
 """).format(SONG_DATA,IAM_ROLE,LOG_JSONPATH)
 
 # FINAL TABLES
