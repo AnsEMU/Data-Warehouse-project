@@ -124,10 +124,10 @@ BLANKSASNULL;
 staging_songs_copy = ("""
 copy staging_songs from '{}'
 credentials 'aws_iam_role={}'
-json '{}' region 'us-west-2'
+json 'auto' region 'us-west-2'
 EMPTYASNULL
 BLANKSASNULL;
-""").format(SONG_DATA,IAM_ROLE,LOG_JSONPATH)
+""").format(SONG_DATA,IAM_ROLE)
 
 # FINAL TABLES
 
