@@ -1,10 +1,6 @@
-# Data-Warehouse-project
-The 3rd Project of Udacity Nanodegree of Data Engineering 
-
-
 ## Project: Data Warehouse
 
-### Purpose of the Project
+### Project objective
 A music streaming startup, Sparkify, has grown their user base and song database and want to move their processes and data onto the cloud. Their data resides in S3, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in their app.
 
 In this project, I have built an ETL pipeline for a database hosted on Redshift. The data was loaded from S3 to staging tables on Redshift and SQL statements were executed that created the analytics tables from these staging tables.
@@ -24,26 +20,39 @@ In this project, I have built an ETL pipeline for a database hosted on Redshift.
 7. etl.py is run to load the data from s3 to staging tables and then from staging tables to analtics tables on redshift.
 
 ### Query results
-> select * from songplays limit 5;
+> select * from factsongplays limit 5;
 ```
-songplay_id start_time user_id level song_id artist_id session_id location user_agent
-14	2018-11-02 01:34:17.0	83	free			82	Lubbock, TX	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36"
-30	2018-11-02 03:34:34.0	86	free			170	La Crosse-Onalaska, WI-MN	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36"
-46	2018-11-02 09:04:16.0	15	paid			172	Chicago-Naperville-Elgin, IL-IN-WI	"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/36.0.1985.125 Chrome/36.0.1985.125 Safari/537.36"
-62	2018-11-02 09:13:37.0	89	free	SOGKLRH12AB0187E8A	AR0HQE41187B9A28D3	88	Cedar Rapids, IA	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36"
-78	2018-11-02 09:26:49.0	15	paid			172	Chicago-Naperville-Elgin, IL-IN-WI	"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/36.0.1985.125 Chrome/36.0.1985.125 Safari/537.36"
+songplay_id,start_time,userid,level,song_id,artist_id,sessionid,location,useragent
+5,2018-11-13 18:39:37.796,15,paid,SOVAEBW12AB0182CE6,AR756JL1187FB3D3A9,417,"Chicago-Naperville-Elgin, IL-IN-WI","""Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/36.0.1985.125 Chrome/36.0.1985.125 Safari/537.36"""
+69,2018-11-14 23:14:07.796,49,paid,SOWGZFG12A8151AF41,ARC8CQZ1187B98DECA,576,"San Francisco-Oakland-Hayward, CA",Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0
+133,2018-11-29 16:00:01.796,49,paid,SOTNWCI12AAF3B2028,ARS54I31187FB46721,1041,"San Francisco-Oakland-Hayward, CA",Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0
+197,2018-11-24 17:29:19.796,29,paid,SODKJWI12A8151BD74,ARM0P6Z1187FB4D466,898,"Atlanta-Sandy Springs-Roswell, GA","""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.78.2 (KHTML, like Gecko) Version/7.0.6 Safari/537.78.2"""
+261,2018-11-28 22:56:08.796,73,paid,SOBONKR12A58A7A7E0,AR5E44Z1187B9A1D74,954,"Tampa-St. Petersburg-Clearwater, FL","""Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.78.2 (KHTML, like Gecko) Version/7.0.6 Safari/537.78.2"""
 ```
 
-> select count(*) from songplays;
+> select count(*) from factsongplays;
 ```
 count
-8390
+319
 ```
-> select songplay_id, sp.artist_id, name, year from songplays sp join artists a on sp.artist_id = a.artist_id join time t on sp.start_time = t.start_time where sp.artist_id = 'AR0HQE41187B9A28D3' and level = 'free';
+> select a.artist_name,s.title,count(f.songplay_id)
+from factsongplays f
+join dimartists a on a.artist_id = f.artist_id
+join dimsongs s on s.song_id = f.song_id
+where  f.level = 'paid'
+group by 1,2
+order by 3 desc
+limit 10;
 ```
-songplay_id artist_id name year
-62	AR0HQE41187B9A28D3	Come Sail Away	2018
-62	AR0HQE41187B9A28D3	Wild World	2018
-62	AR0HQE41187B9A28D3	I Only Want To Be With You	2018
-62	AR0HQE41187B9A28D3	The Boxer	2018
+artist_name      ,title                                                ,count
+Dwight Yoakam    ,You're The One                                       ,1073
+Ron Carter       ,I CAN'T GET STARTED                                  ,72
+B.o.B            ,Nothin' On You [feat. Bruno Mars] (Album Version)    ,64
+Lonnie Gordon    ,Catch You Baby (Steve Pitron & Max Sanna Radio Edit) ,45
+Kid Cudi         ,Make Her Say                                         ,20
+Muse             ,Supermassive Black Hole (Album Version)              ,16
+Kid Cudi         ,Up Up & Away                                         ,10
+Fisher           ,Rianna                                               ,9
+Linkin Park      ,Given Up (Album Version)                             ,6
+David Arkenstone ,Waterfall (Spirit Of The Rainforest Album Version)   ,4
 ```
