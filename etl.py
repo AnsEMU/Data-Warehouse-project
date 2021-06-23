@@ -4,12 +4,20 @@ from sql_queries import copy_table_queries, insert_table_queries
 
 
 def load_staging_tables(cur, conn):
+    """
+    This function calls SQL queries assigned in 
+    copy_table_queries variable.
+    """
     for query in copy_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def insert_tables(cur, conn):
+    """
+    This function calls SQL queries assigned in 
+    insert_table_queries variable.
+    """
     for query in insert_table_queries:
         cur.execute(query)
         conn.commit()
