@@ -1,23 +1,23 @@
 ## Project: Data Warehouse
 
 ### Project objective
-A music streaming startup, Sparkify, has grown their user base and song database and want to move their processes and data onto the cloud. Their data resides in S3, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in their app.
+A music streaming company, called Sparkify, has been scaling up their user and song database and want to move their processes and data onto the cloud. S3 is were thire data located, in a directory of JSON logs on user activity on the app, as well as a directory with JSON metadata on the songs in their app.
 
-In this project, I have built an ETL pipeline for a database hosted on Redshift. The data was loaded from S3 to staging tables on Redshift and SQL statements were executed that created the analytics tables from these staging tables.
+In this project, An ETL pipeline has been built for a database hosted on Redshift. The data was loaded from S3 to staging tables on Redshift and SQL commands were executed for the creation of the analytics tables from these staging tables.
 
 ### Files Description
-* **create_table.py** - This file will create the facts and dimensions tables for the star schema in Redshift.
-* **etl.py** - This file will load data from S3 into staging tables on Redshift and then process that data into your analytics tables on Redshift.
-* **sql_queries.py** - This file will define the SQL statements, which will be imported into the two other files above.
+* **create_table.py** - This file will create the fact and dimension tables for the star schema in Redshift.
+* **etl.py** - This file will load data from S3 into staging tables on Redshift and then process that data into your analytical tables on Redshift.
+* **sql_queries.py** - This file will define the SQL commands, which will be imported into the two other files above.
 
 ### Project Steps
-1. Schemas for the fact and dimension tables were designed.
-2. SQL CREATE statements and DROP statements were written for each of these tables in sql_queries.py.
-3. A redshift cluster is created in AWS console and an IAM role is attached to the cluster that has appropriate read access to S3 bucket where the data resides. 
-4. Redshift database and IAM role info is stored in dwh.cfg.
-5. create_tables.py is run to connect to the database and create these tables.
-6. The table creation and schemas are tested in query editor in the redshift database.
-7. etl.py is run to load the data from s3 to staging tables and then from staging tables to analtics tables on redshift.
+1. Schemas for the fact table and dimension tables were designed.
+2. SQL DROP commands and CREATE commands were written for each of these tables in sql_queries.py.
+3. A redshift cluster is already created in IaC and an IAM role is attached also.
+4. Redshift database and IAM role info with host is stored in dwh.cfg.
+5. create_tables.py is run to connect to the database and drop tables if exists then create these tables.
+6. The table creation and schemas are tested in query editor in the redshift database with results as showen in the bottom.
+7. etl.py is run to load the data from S3 to staging tables and then from staging tables to analtical tables on redshift.
 
 ### Query results
 > select * from factsongplays limit 5;
