@@ -12,6 +12,7 @@ In this project, An ETL pipeline has been built for a database hosted on Redshif
 
 ### Project Steps
 1. Schemas for the fact table and dimension tables were designed.
+![proj yables](https://user-images.githubusercontent.com/12682524/123097594-93e96f80-d430-11eb-8074-5f52146f2980.png)
 2. SQL DROP commands and CREATE commands were written for each of these tables in sql_queries.py.
 3. A redshift cluster is already created in IaC and an IAM role is attached also.
 4. Redshift database and IAM role info with host is stored in dwh.cfg.
